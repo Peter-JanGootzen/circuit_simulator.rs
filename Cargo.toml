@@ -5,3 +5,4 @@ authors = ["Peter-Jan Gootzen <peterjan@gootzen.net>"]
 edition = "2018"
 
 [dependencies]
+gtk = "0.6.0"
