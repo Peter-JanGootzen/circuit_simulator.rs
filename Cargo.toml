@@ -6,3 +6,5 @@ edition = "2018"
 
 [dependencies]
 gtk = "0.6.0"
+objekt = "0.1.2"
+
