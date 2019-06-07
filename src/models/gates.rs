@@ -42,6 +42,7 @@ impl NodeTrait for NodeStruct<AndGate> {
     }
 }
 
+#[derive(Clone)]
 pub struct OrGate;
 impl NodeTrait for NodeStruct<OrGate> {
     fn get_output(&self) -> Output {

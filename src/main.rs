@@ -1,6 +1,7 @@
 mod models;
 mod factories;
 mod gui;
+mod circuit_file_reader;
 
 use models::node::NodeTrait;
 use models::node::NodeStruct;

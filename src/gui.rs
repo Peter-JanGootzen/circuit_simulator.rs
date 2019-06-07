@@ -1,7 +1,6 @@
 use gtk::prelude::*;
 use gtk::{Button, Window, WindowType, FileChooserDialog, FileChooserAction, ResponseType};
-use std::process;
-use std::fs;
+use crate::circuit_file_reader;
 
 pub fn init(){
     if gtk::init().is_err() {
@@ -21,7 +20,7 @@ pub fn init(){
 
     let button = Button::new_with_label("Click me!");
     button.connect_clicked(|_| {
-        open_file_chooser()
+        let file = println!("{:?}", circuit_file_reader::load_file(open_file_chooser().unwrap()));
     });
 
     window.add(&button);
@@ -29,7 +28,7 @@ pub fn init(){
     window.show_all();
 }
 
-pub fn open_file_chooser() {
+pub fn open_file_chooser() -> Result<String, &'static str> {
     let filechooser = FileChooserDialog::new("Open File",
                             Some(&Window::new(WindowType::Popup)),
                             FileChooserAction::Open,
@@ -37,13 +36,16 @@ pub fn open_file_chooser() {
     filechooser.add_button("Cancel", ResponseType::Cancel.into());
     filechooser.add_button("Open", ResponseType::Ok.into());
     let res = filechooser.run();
+    let mut filepath = String::new();
     if res == ResponseType::Ok.into() {
-        let filename = filechooser.get_filename();
-        let file = fs::read_to_string(filename.unwrap().into_os_string());
-        println!("{:?}", file);
+        filepath = match filechooser.get_filename().unwrap().into_os_string().into_string() {
+            Ok(filepath) => { filepath }
+            Err(_) => { return Err("Could not get path of file") }
+        };
     } else if res == ResponseType::Cancel.into() {
-        println!("You canceled the file dialog");
+        filechooser.destroy();
+        return Err("You canceled the file dialog");
     }
     filechooser.destroy();
-    process::exit(0);
+    return Ok(filepath);
 }

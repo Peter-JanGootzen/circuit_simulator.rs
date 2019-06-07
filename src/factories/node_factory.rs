@@ -2,6 +2,7 @@ use crate::models::node::NodeTrait;
 use crate::models::node::NodeStruct;
 use crate::models::gates::AndGate;
 use crate::models::gates::NotGate;
+use crate::models::gates::OrGate;
 use crate::models::gates::SignalGate;
 use crate::models::output::Output;
 
@@ -22,7 +23,7 @@ impl<'a> NodeFactory<'a> {
         match type_name {
             "INPUTHIGH" => Ok(Box::new(NodeStruct::new(SignalGate { signal: Output::True }))),
             "INPUTLOW" => Ok(Box::new(NodeStruct::new(SignalGate { signal: Output::False }))),
-            "OR" => Err("Not implemented!"),
+            "OR" => Ok(Box::new(NodeStruct::new(OrGate))),
             "NOT" => Ok(Box::new(NodeStruct::new(NotGate))),
             "AND" => Ok(Box::new(NodeStruct::new(AndGate))),
             _ => Err("This type is unknown")
@@ -40,6 +41,7 @@ impl<'a> NodeFactory<'a> {
         nodes.insert("INPUTLOW", Box::new(NodeStruct::new(SignalGate { signal: Output::False })));
         nodes.insert("NOT", Box::new(NodeStruct::new(NotGate)));
         nodes.insert("AND", Box::new(NodeStruct::new(AndGate)));
+        nodes.insert("OR", Box::new(NodeStruct::new(OrGate)));
         NodeFactory {
             nodes: nodes
         }
