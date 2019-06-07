@@ -39,4 +39,23 @@ impl NodeTrait for NodeStruct<AndGate> {
     }
 }
 
-// OrGate, Bram-Boris can implement this one
+pub struct OrGate;
+impl NodeTrait for NodeStruct<OrGate> {
+    fn get_output(&self) -> Output {
+        if self.inputs.len() >= 1 {
+            match self.inputs[0].get_output() {
+                Output::True => {
+                    return Output::True;
+                },
+                Output::False => {
+                    return match self.inputs[1].get_output() {
+                        Output::True =>  Output::True,
+                        Output::False => Output::False
+                    }
+                }
+            }
+        } else {
+            return Output::False;
+        }
+    }
+}
