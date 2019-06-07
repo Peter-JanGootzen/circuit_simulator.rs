@@ -11,6 +11,7 @@ use models::output::Output;
 use models::visitor::Visitor;
 use models::visitor::Visitable;
 use factories::node_factory::NodeFactory;
+use std::ptr::eq;
 
 fn main() {
     let signal_false_node = NodeStruct {
@@ -34,9 +35,13 @@ fn main() {
     };
     println!("The last Node outputs: {:?}", and_node.get_output());
 
+    let factory = NodeFactory::new();
     let node_type = "INPUTLOW";
-    let node_from_factory = NodeFactory::produce_node(node_type.to_string()).unwrap();
+    let node_from_factory = factory.produce_node(node_type).unwrap();
+    let node_from_factory2 = factory.produce_node(node_type).unwrap();
     println!("We created a node with the NodeFactory with the type_name: {}, its output is: {:?}", node_type, node_from_factory.get_output());
+
+    println!("We created another node of that type and are they equal? {}", eq(&node_from_factory, &node_from_factory2));
 
     gui::init();
     println!("Hello, world!");

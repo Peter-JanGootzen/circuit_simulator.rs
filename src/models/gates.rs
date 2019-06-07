@@ -2,6 +2,7 @@ use super::output::Output;
 use super::node::NodeTrait;
 use super::node::NodeStruct;
 
+#[derive(Clone)]
 pub struct NotGate;
 impl NodeTrait for NodeStruct<NotGate> {
     fn get_output(&self) -> Output {
@@ -9,6 +10,7 @@ impl NodeTrait for NodeStruct<NotGate> {
     }
 }
 
+#[derive(Clone)]
 pub struct SignalGate {
     pub signal: Output
 }
@@ -18,6 +20,7 @@ impl NodeTrait for NodeStruct<SignalGate> {
     }
 }
 
+#[derive(Clone)]
 pub struct AndGate;
 impl NodeTrait for NodeStruct<AndGate> {
     fn get_output(&self) -> Output {
