@@ -2,16 +2,26 @@ use super::node::NodeTrait;
 use super::output::Output;
 
 #[derive(Clone)]
-pub struct Circuit<'a> {
-    pub nodes: Vec<&'a Box<dyn NodeTrait>>,
-    pub last_node: &'a Box<dyn NodeTrait>
+pub struct Circuit {
+    pub nodes: Vec<Box<dyn NodeTrait>>,
 }
 
-impl<'a> NodeTrait for Circuit<'a> {
+impl NodeTrait for Circuit {
     fn get_output(&self) -> Output {
-        return self.last_node.get_output();
+        return self.get_last_node().get_output();
     }
     fn get_inputs(&self) -> &Vec<&Box<dyn NodeTrait>> {
-        return self.last_node.get_inputs();
+        return self.get_last_node().get_inputs();
+    }
+}
+
+impl Circuit {
+    pub fn new(nodes: Vec<Box<dyn NodeTrait>>) -> Circuit {
+        Circuit {
+            nodes: nodes
+        }
+    }
+    pub fn get_last_node(&self) -> &Box<dyn NodeTrait> {
+        return &self.nodes[self.nodes.len() - 1];
     }
 }
