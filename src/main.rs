@@ -2,6 +2,8 @@ mod models;
 mod factories;
 mod gui;
 mod circuit_file_reader;
+mod circuit_builder;
+mod circuit_loader;
 
 use models::node::NodeTrait;
 use models::node::NodeStruct;
@@ -34,7 +36,7 @@ fn main() {
         inputs: vec![Box::new(signal_true_node), Box::new(not_node)],
         gate: AndGate
     };
-    println!("The last Node outputs: {:?}", and_node.get_output());
+    //println!("The last Node outputs: {:?}", and_node.get_output());
 
     let factory = NodeFactory::new();
     let node_type = "INPUTLOW";
@@ -44,7 +46,24 @@ fn main() {
 
     println!("We created another node of that type and are they equal? {}", eq(&node_from_factory, &node_from_factory2));
 
-    gui::init();
-    println!("Hello, world!");
+    gui::init(|filepath|
+              match circuit_file_reader::load_file(filepath) {
+                  Ok(circuit_information) => {
+                      match circuit_loader::load_circuit(circuit_information) {
+                          Ok(nodes) =>  {
+                              println!("Nodes created {:?}", nodes.len());
+                              //match circuit_builder::connect_nodes(lines.1, nodes) {
+                              //    Ok(nodes) => println!("Completed circuit with {:?} nodes.", nodes.len()),
+                              //    Err(error) => { gui::show_error(error); }
+                              //}
+
+                          },
+                          Err(error) => { gui::show_error(error); }
+                      };
+
+                  },
+                  Err(error) => { return gui::show_error(error) }
+              }
+    );
     gtk::main();
 }
