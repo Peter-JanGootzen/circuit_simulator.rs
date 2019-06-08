@@ -8,7 +8,7 @@ pub struct InfiniteLoopChecker<'a> {
 }
 impl<'a> Checker<'a> for InfiniteLoopChecker<'a> {
     fn check(&mut self, circuit: &'a Circuit) -> Option<CheckerMessage> {
-        return self.rec(&circuit.last_node);
+        return self.rec(circuit.get_last_node());
     }
 }
 impl<'a> InfiniteLoopChecker<'a> {

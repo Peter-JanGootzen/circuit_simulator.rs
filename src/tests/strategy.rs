@@ -71,8 +71,7 @@ fn infiniteloopchecker_testv2() {
         gate: AndGate
     });
     let circuit = Circuit {
-        nodes: vec![&signal_false_node, &not_node, &signal_true_node, &and_node],
-        last_node: &and_node
+        nodes: vec![signal_false_node, not_node, signal_true_node, and_node]
     };
     let mut checker = InfiniteLoopChecker::new();
     assert!(checker.check(&circuit).is_none());

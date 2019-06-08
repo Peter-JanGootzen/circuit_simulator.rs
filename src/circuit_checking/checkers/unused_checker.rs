@@ -14,7 +14,7 @@ impl<'a> Checker<'a> for UnusedChecker<'a> {
             self.nodes_found.insert(&node, false);
         }
 
-        self.rec(&circuit.last_node);
+        self.rec(circuit.get_last_node());
 
         for (_, found) in self.nodes_found.iter() {
             if !found {
