@@ -1,6 +1,8 @@
 mod models;
 mod factories;
 mod gui;
+mod circuit_checking;
+mod tests;
 
 use models::node::NodeTrait;
 use models::node::NodeStruct;
@@ -12,6 +14,7 @@ use models::visitor::Visitor;
 use models::visitor::Visitable;
 use factories::node_factory::NodeFactory;
 use std::ptr::eq;
+use std::collections::HashMap;
 
 fn main() {
     let signal_false_node = NodeStruct {
@@ -43,7 +46,21 @@ fn main() {
 
     println!("We created another node of that type and are they equal? {}", eq(&node_from_factory, &node_from_factory2));
 
-    gui::init();
-    println!("Hello, world!");
-    gtk::main();
+    let mut vec: Vec<&Box<dyn NodeTrait>> = Vec::new();
+    vec.push(&node_from_factory);
+    println!("{:?}", vec.contains(&&node_from_factory));
+
+//    let asb = node_from_factory as *const Box<dyn NodeTrait>;
+//    println!("{:?}", );
+
+    let mut hashmap: HashMap<&Box<dyn NodeTrait>, bool> = HashMap::new();
+    hashmap.insert(&node_from_factory, true);
+    hashmap.insert(&node_from_factory2, false);
+
+    println!("{}", hashmap[&node_from_factory]);
+    println!("{}", hashmap[&node_from_factory2]);
+
+//    gui::init();
+//    println!("Hello, world!");
+//    gtk::main();
 }

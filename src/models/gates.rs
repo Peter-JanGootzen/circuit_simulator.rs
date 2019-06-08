@@ -8,6 +8,9 @@ impl NodeTrait for NodeStruct<NotGate> {
     fn get_output(&self) -> Output {
         self.inputs[0].get_output().invert()
     }
+    fn get_inputs(&self) -> &Vec<Box<dyn NodeTrait>> {
+        return &self.inputs;
+    }
 }
 
 #[derive(Clone)]
@@ -17,6 +20,9 @@ pub struct SignalGate {
 impl NodeTrait for NodeStruct<SignalGate> {
     fn get_output(&self) -> Output {
         self.gate.signal.clone()
+    }
+    fn get_inputs(&self) -> &Vec<Box<dyn NodeTrait>> {
+        return &self.inputs;
     }
 }
 
@@ -39,6 +45,9 @@ impl NodeTrait for NodeStruct<AndGate> {
         } else {
             return Output::False
         }
+    }
+    fn get_inputs(&self) -> &Vec<Box<dyn NodeTrait>> {
+        return &self.inputs;
     }
 }
 
