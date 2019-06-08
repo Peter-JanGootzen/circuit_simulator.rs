@@ -3,6 +3,7 @@ mod factories;
 mod gui;
 mod circuit_checking;
 mod tests;
+mod circuit_file_reader;
 
 use models::node::NodeTrait;
 use models::node::NodeStruct;
@@ -17,31 +18,32 @@ use std::ptr::eq;
 use std::collections::HashMap;
 
 fn main() {
-    let signal_false_node = NodeStruct {
-        inputs: Vec::new(),
-        gate: SignalGate { signal: Output::False }
-    };
-    let not_node = NodeStruct {
-        inputs: vec![Box::new(signal_false_node)],
-        gate: NotGate
-    };
+    //let signal_false_node: Box<dyn NodeTrait> = Box::new(NodeStruct {
+    //    inputs: Vec::new(),
+    //    gate: SignalGate { signal: Output::False }
+    //});
+    //let not_node: Box<dyn NodeTrait> = Box::new(NodeStruct {
+    //    inputs: vec![&Box::new(signal_false_node)],
+    //    gate: NotGate
+    //});
 
-    let signal_true_node = NodeStruct {
-        inputs: Vec::new(),
-        gate: SignalGate { signal: Output::True }
-    };
-    signal_true_node.accept_visitor(Visitor);
+    //let signal_true_node: Box<dyn NodeTrait> = Box::new(NodeStruct {
+    //    inputs: Vec::new(),
+    //    gate: SignalGate { signal: Output::True }
+    //});
+    ////signal_true_node.accept_visitor(Visitor);
 
-    let and_node = NodeStruct {
-        inputs: vec![Box::new(signal_true_node), Box::new(not_node)],
-        gate: AndGate
-    };
-    println!("The last Node outputs: {:?}", and_node.get_output());
+    //let and_node: Box<dyn NodeTrait> = Box::new(NodeStruct {
+    //    inputs: vec![&Box::new(signal_true_node), &Box::new(not_node)],
+    //    gate: AndGate
+    //});
+    //println!("The last Node outputs: {:?}", and_node.get_output());
 
     let factory = NodeFactory::new();
+    let factory_filled = NodeFactory::new_filled();
     let node_type = "INPUTLOW";
-    let node_from_factory = factory.produce_node(node_type).unwrap();
-    let node_from_factory2 = factory.produce_node(node_type).unwrap();
+    let node_from_factory = factory_filled.produce_node(node_type).unwrap();
+    let node_from_factory2 = factory_filled.produce_node(node_type).unwrap();
     println!("We created a node with the NodeFactory with the type_name: {}, its output is: {:?}", node_type, node_from_factory.get_output());
 
     println!("We created another node of that type and are they equal? {}", eq(&node_from_factory, &node_from_factory2));

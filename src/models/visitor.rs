@@ -16,7 +16,7 @@ impl AbstractVisitor for Visitor {
 pub trait Visitable {
     fn accept_visitor(&self, v: Visitor);
 }
-impl Visitable for NodeStruct<SignalGate> {
+impl<'a> Visitable for NodeStruct<'a, SignalGate> {
     fn accept_visitor(&self, v: Visitor) {
         v.visit_signal_node(&self);
     }

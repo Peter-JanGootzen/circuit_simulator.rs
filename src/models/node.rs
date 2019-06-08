@@ -13,17 +13,17 @@ use std::mem::transmute;
 
 pub trait NodeTrait: objekt::Clone  {
     fn get_output(&self) -> Output;
-    fn get_inputs(&self) -> &Vec<Box<dyn NodeTrait>>;
+    fn get_inputs(&self) -> &Vec<&Box<dyn NodeTrait>>;
 }
 objekt::clone_trait_object!(NodeTrait);
 
 #[derive(Clone)]
-pub struct NodeStruct<Gate> {
-    pub inputs: Vec<Box<dyn NodeTrait>>,
+pub struct NodeStruct<'a, Gate> {
+    pub inputs: Vec<&'a Box<dyn NodeTrait>>,
     pub gate: Gate,
 }
-impl<Gate> NodeStruct<Gate> {
-    pub fn new(gate: Gate) -> NodeStruct<Gate> {
+impl<'a, Gate> NodeStruct<'a, Gate> {
+    pub fn new(gate: Gate) -> NodeStruct<'a, Gate> {
         NodeStruct {
             inputs: Vec::new(),
             gate: gate

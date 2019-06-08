@@ -1,5 +1,5 @@
-use crate::circuit_checking::checks::unused_checker::UnusedChecker;
-use crate::circuit_checking::checks::infinite_loop_checker::InfiniteLoopChecker;
+use crate::circuit_checking::checkers::unused_checker::UnusedChecker;
+use crate::circuit_checking::checkers::infinite_loop_checker::InfiniteLoopChecker;
 use crate::models::circuit::Circuit;
 use crate::circuit_checking::checker_message::CheckerMessage;
 use crate::circuit_checking::check_strategy::CheckStrategy;
