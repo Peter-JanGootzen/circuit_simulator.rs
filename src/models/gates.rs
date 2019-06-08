@@ -4,9 +4,12 @@ use super::node::NodeStruct;
 
 #[derive(Clone)]
 pub struct NotGate;
-impl NodeTrait for NodeStruct<NotGate> {
+impl<'a> NodeTrait for NodeStruct<'a, NotGate> {
     fn get_output(&self) -> Output {
         self.inputs[0].get_output().invert()
+    }
+    fn get_inputs(&self) -> &Vec<&Box<dyn NodeTrait>> {
+        return &self.inputs;
     }
 }
 
@@ -14,15 +17,18 @@ impl NodeTrait for NodeStruct<NotGate> {
 pub struct SignalGate {
     pub signal: Output
 }
-impl NodeTrait for NodeStruct<SignalGate> {
+impl<'a> NodeTrait for NodeStruct<'a, SignalGate> {
     fn get_output(&self) -> Output {
         self.gate.signal.clone()
+    }
+    fn get_inputs(&self) -> &Vec<&Box<dyn NodeTrait>> {
+        return &self.inputs;
     }
 }
 
 #[derive(Clone)]
 pub struct AndGate;
-impl NodeTrait for NodeStruct<AndGate> {
+impl<'a> NodeTrait for NodeStruct<'a, AndGate> {
     fn get_output(&self) -> Output {
         if self.inputs.len() == 2 {
             match self.inputs[0].get_output() {
@@ -40,11 +46,14 @@ impl NodeTrait for NodeStruct<AndGate> {
             return Output::False
         }
     }
+    fn get_inputs(&self) -> &Vec<&Box<dyn NodeTrait>> {
+        return &self.inputs;
+    }
 }
 
 #[derive(Clone)]
 pub struct OrGate;
-impl NodeTrait for NodeStruct<OrGate> {
+impl<'a> NodeTrait for NodeStruct<'a, OrGate> {
     fn get_output(&self) -> Output {
         if self.inputs.len() >= 1 {
             match self.inputs[0].get_output() {
@@ -61,5 +70,8 @@ impl NodeTrait for NodeStruct<OrGate> {
         } else {
             return Output::False;
         }
+    }
+    fn get_inputs(&self) -> &Vec<&Box<dyn NodeTrait>> {
+        return &self.inputs;
     }
 }
