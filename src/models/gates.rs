@@ -1,6 +1,7 @@
 use super::output::Output;
 use super::node::NodeTrait;
 use super::node::NodeStruct;
+use std::any::Any;
 
 #[derive(Clone)]
 pub struct NotGate;

@@ -63,7 +63,8 @@ name = "circuit_simulator"
 version = "0.1.0"
 dependencies = [
  "gtk 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "objekt 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "mopa 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "objekt-clonable 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -242,9 +243,33 @@ version = "0.2.54"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
+name = "mopa"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
 name = "objekt"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "objekt-clonable"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "objekt 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "objekt-clonable-impl 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "objekt-clonable-impl"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "proc-macro2 0.4.30 (registry+https://github.com/rust-lang/crates.io-index)",
+ "quote 0.6.12 (registry+https://github.com/rust-lang/crates.io-index)",
+ "syn 0.15.35 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "pango"
@@ -274,6 +299,37 @@ dependencies = [
 [[package]]
 name = "pkg-config"
 version = "0.3.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "proc-macro2"
+version = "0.4.30"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "unicode-xid 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "quote"
+version = "0.6.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "proc-macro2 0.4.30 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "syn"
+version = "0.15.35"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "proc-macro2 0.4.30 (registry+https://github.com/rust-lang/crates.io-index)",
+ "quote 0.6.12 (registry+https://github.com/rust-lang/crates.io-index)",
+ "unicode-xid 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "unicode-xid"
+version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
@@ -316,10 +372,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum gtk-sys 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)" = "849835f05d46f605b00ee9fefb6d5921238c570af406f35ee7426ed01cd6795c"
 "checksum lazy_static 1.3.0 (registry+https://github.com/rust-lang/crates.io-index)" = "bc5729f27f159ddd61f4df6228e827e86643d4d3e7c32183cb30a1c08f604a14"
 "checksum libc 0.2.54 (registry+https://github.com/rust-lang/crates.io-index)" = "c6785aa7dd976f5fbf3b71cfd9cd49d7f783c1ff565a858d71031c6c313aa5c6"
+"checksum mopa 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "a785740271256c230f57462d3b83e52f998433a7062fc18f96d5999474a9f915"
 "checksum objekt 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)" = "2069a3ae3dad97a4ae47754e8f47e5d2f1fd32ab7ad8a84bb31d051faa59cc3c"
+"checksum objekt-clonable 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "d71457e634c3ac4964316163daa2e875d9244fbe564a9dd9bc97293b33ddfdcc"
+"checksum objekt-clonable-impl 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "de208d4d34735c5d42944c88c84e21ed7cb9e5a4ce6e862c926ffc59f45160c9"
 "checksum pango 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)" = "4e36b55d7cd522bd183efeb3dfabc547bda1f26eadf8a1241dac09ab3fd3242c"
 "checksum pango-sys 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)" = "747ab9cd4d537e6dc5ef0e4308c10dde8b706673b0237fed4e056b8d2c0b23c8"
 "checksum pkg-config 0.3.14 (registry+https://github.com/rust-lang/crates.io-index)" = "676e8eb2b1b4c9043511a9b7bea0915320d7e502b0a079fb03f9635a5252b18c"
+"checksum proc-macro2 0.4.30 (registry+https://github.com/rust-lang/crates.io-index)" = "cf3d2011ab5c909338f7887f4fc896d35932e29146c12c8d01da6b22a80ba759"
+"checksum quote 0.6.12 (registry+https://github.com/rust-lang/crates.io-index)" = "faf4799c5d274f3868a4aae320a0a182cbd2baee377b378f080e16a23e9d80db"
+"checksum syn 0.15.35 (registry+https://github.com/rust-lang/crates.io-index)" = "641e117d55514d6d918490e47102f7e08d096fdde360247e4a10f7a91a8478d3"
+"checksum unicode-xid 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "fc72304796d0818e357ead4e000d19c9c174ab23dc11093ac919054d20a6a7fc"
 "checksum winapi 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)" = "f10e386af2b13e47c89e7236a7a14a086791a2b88ebad6df9bf42040195cf770"
 "checksum winapi-i686-pc-windows-gnu 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "ac3b87c63620426dd9b991e5ce0329eff545bccbbb34f3be09ff6fb6ab51b7b6"
 "checksum winapi-x86_64-pc-windows-gnu 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"

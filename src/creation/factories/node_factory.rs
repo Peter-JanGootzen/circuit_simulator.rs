@@ -8,30 +8,38 @@ use crate::models::output::Output;
 
 use std::collections::HashMap;
 
-pub struct NodeFactory {
+pub struct LowBindingNodeFactory {
     nodes: HashMap<String, Box<dyn NodeTrait>>
 }
 
-impl NodeFactory {
-    pub fn produce_node(&self, type_name: &str) -> Result<Box<dyn NodeTrait>, &'static str> {
-        if self.nodes.contains_key(type_name) {
-            Ok(self.nodes[type_name].clone())
+pub trait NodeFactoryTrait {
+    fn produce_node(&self, type_name: String) -> Result<Box<dyn NodeTrait>, &'static str>;
+    fn register_node_type(&mut self, type_name: String, node: Box<dyn NodeTrait>);
+}
+
+impl NodeFactoryTrait for LowBindingNodeFactory {
+    fn produce_node(&self, type_name: String) -> Result<Box<dyn NodeTrait>, &'static str> {
+        if self.nodes.contains_key(&type_name) {
+            Ok(self.nodes[&type_name].clone())
         } else {
             Err("This type is unknown")
         }
     }
 
-    pub fn register_node_type(&mut self, type_name: String, node: Box<dyn NodeTrait>) {
+    fn register_node_type(&mut self, type_name: String, node: Box<dyn NodeTrait>) {
         self.nodes.insert(type_name, node);
     }
+}
 
-    pub fn new() -> NodeFactory {
-        NodeFactory {
+impl<'a> LowBindingNodeFactory {
+    pub fn new() -> Box<dyn NodeFactoryTrait> {
+        let nf: Box<dyn NodeFactoryTrait> = Box::new(LowBindingNodeFactory {
             nodes: HashMap::new()
-        }
+        });
+        return nf;
     }
-    pub fn new_filled() -> NodeFactory {
-        let mut nf = NodeFactory {
+    pub fn new_filled() -> LowBindingNodeFactory {
+        let mut nf = LowBindingNodeFactory {
             nodes: HashMap::new()
         };
 

@@ -4,6 +4,7 @@ use super::output::Output;
 #[derive(Clone)]
 pub struct Circuit {
     pub nodes: Vec<Box<dyn NodeTrait>>,
+    pub output_nodes: Vec<Box<dyn NodeTrait>>
 }
 
 impl NodeTrait for Circuit {
@@ -16,9 +17,10 @@ impl NodeTrait for Circuit {
 }
 
 impl Circuit {
-    pub fn new(nodes: Vec<Box<dyn NodeTrait>>) -> Circuit {
+    pub fn new(nodes: Vec<Box<dyn NodeTrait>>, output_nodes: Vec<Box<dyn NodeTrait>>) -> Circuit {
         Circuit {
-            nodes: nodes
+            nodes: nodes,
+            output_nodes: output_nodes
         }
     }
     pub fn get_last_node(&self) -> &Box<dyn NodeTrait> {

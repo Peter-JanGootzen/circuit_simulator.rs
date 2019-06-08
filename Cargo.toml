@@ -6,5 +6,5 @@ edition = "2018"
 
 [dependencies]
 gtk = "0.6.0"
-objekt = "0.1.2"
-
+objekt-clonable = "0.2.2"
+mopa = "0.2.2"
