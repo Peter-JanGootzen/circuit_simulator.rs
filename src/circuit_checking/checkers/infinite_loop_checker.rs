@@ -3,9 +3,10 @@ use crate::circuit_checking::checker::Checker;
 use crate::models::circuit::Circuit;
 use crate::circuit_checking::checker_message::CheckerMessage;
 use std::rc::Rc;
+use std::cell::RefCell;
 
 pub struct InfiniteLoopChecker {
-    already_found: Vec<Rc<Node>>
+    already_found: Vec<Rc<RefCell<Node>>>
 }
 impl Checker for InfiniteLoopChecker {
     fn check(&mut self, circuit: &Circuit) -> Option<CheckerMessage> {
@@ -21,8 +22,8 @@ impl Checker for InfiniteLoopChecker {
     }
 }
 impl InfiniteLoopChecker {
-    fn rec(&mut self, last_node: Rc<Node>) -> Option<CheckerMessage> {
-        let input_nodes_option = last_node.get_input_nodes();
+    fn rec(&mut self, last_node: Rc<RefCell<Node>>) -> Option<CheckerMessage> {
+        let input_nodes_option = last_node.borrow().get_input_nodes();
         match input_nodes_option {
             Some(input_nodes) => {
                 for node in input_nodes.iter() {

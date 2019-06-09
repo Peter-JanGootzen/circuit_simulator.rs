@@ -6,11 +6,12 @@ use std::hash::Hasher;
 //use std::collections::hash_map::DefaultHasher;
 use std::mem::transmute;
 use std::rc::Rc;
-use crate::models::gates::NotGate;
-use crate::models::gates::SignalGate;
-use crate::models::gates::OrGate;
-use crate::models::gates::AndGate;
-use crate::models::gates::ProbeGate;
+use std::cell::RefCell;
+use crate::models::gates::not_gate::NotGate;
+use crate::models::gates::signal_gate::SignalGate;
+use crate::models::gates::or_gate::OrGate;
+use crate::models::gates::and_gate::AndGate;
+use crate::models::gates::probe_gate::ProbeGate;
 
 //fn create_key(t: &dyn NodeTrait) -> [usize; 2] {
 //    unsafe {
@@ -39,7 +40,7 @@ impl NodeTrait for Node {
 }
 
 impl Node {
-    pub fn add_input(&mut self, node: Rc<Node>) {
+    pub fn add_input(&mut self, node: Rc<RefCell<Node>>) {
         match self {
             Node::Not(gate) => gate.inputs.borrow_mut().push(node),
             Node::And(gate) => gate.inputs.borrow_mut().push(node),
@@ -47,13 +48,29 @@ impl Node {
             Node::Probe(gate) => gate.inputs.borrow_mut().push(node),
             _ => ()
         }
+        match self.get_input_nodes() {
+            Some(inputs) => println!("{:?}", inputs.len()),
+            None => println!("{:?}", 0)
+        }
     }
-    pub fn get_input_nodes(&self) -> Option<Vec<Rc<Node>>> {
+    pub fn get_input_nodes(&self) -> Option<Vec<Rc<RefCell<Node>>>> {
         match self {
             Node::Not(gate) => {
-                let inputs: Vec<Rc<Node>> = gate.inputs.borrow().iter().map(|node| node.clone()).collect();
+                let inputs: Vec<Rc<RefCell<Node>>> = gate.inputs.borrow().iter().map(|node| node.clone()).collect();
                 Some(inputs.iter().map(|node| node.clone()).collect())
-            }
+            },
+            Node::Or(gate) => {
+                let inputs: Vec<Rc<RefCell<Node>>> = gate.inputs.borrow().iter().map(|node| node.clone()).collect();
+                Some(inputs.iter().map(|node| node.clone()).collect())
+            },
+            Node::And(gate) => {
+                let inputs: Vec<Rc<RefCell<Node>>> = gate.inputs.borrow().iter().map(|node| node.clone()).collect();
+                Some(inputs.iter().map(|node| node.clone()).collect())
+            },
+            Node::Probe(gate) => {
+                let inputs: Vec<Rc<RefCell<Node>>> = gate.inputs.borrow().iter().map(|node| node.clone()).collect();
+                Some(inputs.iter().map(|node| node.clone()).collect())
+            },
             Node::Signal(_) => None,
             _ => None
         }

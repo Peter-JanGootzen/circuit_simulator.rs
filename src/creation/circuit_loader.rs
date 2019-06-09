@@ -11,13 +11,17 @@ pub fn load_circuit<'a>(nodes: HashMap<String, String>, node_links: HashMap<Stri
     let strategy: Box<dyn CheckStrategy> = Box::new(LaxCheckStrategy{});
     let mut builder = CircuitBuilder::new(factory, strategy);
     for (node_name, node_type) in nodes {
+        println!("{:?} {:?}", node_name, node_type);
         match builder.create_node(node_name, node_type) {
             Some(message) => panic!(message),
             _ => ()
         }
     }
     for (node_name, node_links) in node_links {
-        builder.connect_inputs(node_name, node_links);
+        match builder.connect_inputs(node_name, node_links) {
+            Some(message) => panic!(message),
+            _ => ()
+        };
     }
 
     return builder.get_circuit();

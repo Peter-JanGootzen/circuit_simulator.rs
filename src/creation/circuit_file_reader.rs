@@ -70,7 +70,7 @@ pub trait CircuitReaderTrait {
         let node_name = node_strings[0].to_string();
         let mut node_type = node_strings[1].to_string();
         node_type.remove(node_type.len() - 1);
-        println!("{:?}", node_type);
+        println!("{:?} - {:?}", node_name, node_type);
         return (node_name, node_type)
     }
 
@@ -93,6 +93,10 @@ pub trait CircuitReaderTrait {
         let inputs_len = inputs.len();
         let idx = inputs[inputs_len - 1].len() -1;
         inputs[inputs_len - 1].remove(idx);
+        println!("name: {:?}", node_name);
+        for input in inputs.iter() {
+            println!("input: {:?}", input);
+        }
         return (node_name, inputs);
     }
 }

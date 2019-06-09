@@ -59,7 +59,7 @@ pub fn simulate(circuit_option: &Option<Circuit>) -> String {
                 node.accept_visitor(&mut visitor);
                 output += &visitor.get_output();
             }
-            output
+            return output;
         },
         None => String::from("Het circuit kon niet geladen worden")
     }

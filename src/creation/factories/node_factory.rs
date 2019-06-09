@@ -1,10 +1,10 @@
 use crate::models::output::Output;
 use crate::models::node::Node;
-use crate::models::gates::SignalGate;
-use crate::models::gates::NotGate;
-use crate::models::gates::OrGate;
-use crate::models::gates::AndGate;
-use crate::models::gates::ProbeGate;
+use crate::models::gates::signal_gate::SignalGate;
+use crate::models::gates::not_gate::NotGate;
+use crate::models::gates::or_gate::OrGate;
+use crate::models::gates::and_gate::AndGate;
+use crate::models::gates::probe_gate::ProbeGate;
 use std::cell::RefCell;
 
 
@@ -44,8 +44,8 @@ impl<'a> LowBindingNodeFactory {
             nodes: HashMap::new()
         });
 
-        nf.register_node_type(String::from("INPUT_HIGH"), Node::Signal(SignalGate { signal: Output::True }));
-        nf.register_node_type(String::from("INPUT_LOW"), Node::Signal(SignalGate { signal: Output::False }));
+        nf.register_node_type(String::from("INPUT_HIGH"), Node::Signal(SignalGate { signal: Output::True(0) }));
+        nf.register_node_type(String::from("INPUT_LOW"), Node::Signal(SignalGate { signal: Output::False(0) }));
         nf.register_node_type(String::from("PROBE"), Node::Probe(ProbeGate { inputs: RefCell::new(Vec::new())}));
         nf.register_node_type(String::from("NOT"), Node::Not(NotGate { inputs: RefCell::new(Vec::new())}));
         nf.register_node_type(String::from("AND"), Node::And(AndGate { inputs: RefCell::new(Vec::new())}));

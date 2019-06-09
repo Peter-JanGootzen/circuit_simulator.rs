@@ -13,6 +13,7 @@ use models::circuit::Circuit;
 use std::io::stdin;
 use std::io::prelude::*;
 use std::cell::RefCell;
+use crate::models::node::NodeTrait;
 
 fn main() {
     let mut circuit: Option<Circuit> = None;
@@ -34,6 +35,10 @@ fn main() {
 
     match load_circuit(String::from("./examplecircuit.txt")) {
         Ok(circuit) => {
+            let output_nodess = circuit.get_output_nodes();
+            for node in output_nodess.iter() {
+                println!("{:?}", node.borrow_mut().get_output());
+            }
             println!("{}", gui::simulate(&Some(circuit)));
         },
         Err(message) => panic!(message)

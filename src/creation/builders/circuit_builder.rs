@@ -8,10 +8,12 @@ use std::cell::RefCell;
 
 
 pub struct CircuitBuilder {
-    nodes: HashMap<String, Rc<Node>>,
-    nodes_is_no_ouput: HashMap<String, bool>,
+    nodes: HashMap<String, Rc<RefCell<Node>>>,
     factory: Box<dyn NodeFactoryTrait>,
-    check_strategy: Box<dyn CheckStrategy>
+    check_strategy: Box<dyn CheckStrategy>,
+    outputs: Vec<String>,
+    inputs: Vec<String>,
+    link_counter: u32
 }
 pub trait CircuitBuilderTrait {
     fn create_node(&mut self, node_name: String, node_type: String) -> Option<&'static str>;
@@ -23,7 +25,7 @@ impl CircuitBuilderTrait for CircuitBuilder {
     fn create_node(&mut self, node_name: String, node_type: String) -> Option<&'static str> {
         match self.factory.produce_node(node_type) {
             Ok(node) => {
-                self.nodes.insert(node_name, Rc::new(node));
+                self.nodes.insert(node_name, Rc::new(RefCell::new(node)));
                 return None;
             },
             Err(message) => {
@@ -31,21 +33,26 @@ impl CircuitBuilderTrait for CircuitBuilder {
             },
         }
     }
-    fn connect_inputs(&mut self, node_name: String, node_links: Vec<String>) -> Option<&'static str> {
-        for node_link in node_links.iter() {
-            self.nodes_is_no_ouput.insert(node_link.clone(), true);
-            let to_add =  match self.nodes.remove(&node_link.clone()) {
-                Some(node) => node,
-                None => return Some("Could not find node in HashMap, if this error occured just give up.")
-            };
-            match self.nodes.get_mut(&node_name.clone()) {
-                Some(mut_node) => match Rc::get_mut(mut_node) {
-                    Some(rc_mut_node) => rc_mut_node.add_input(to_add.clone()),
-                    None => return Some("Could not get a mut lock on the node")
-                }
+    fn connect_inputs(&mut self, node: String, node_outputs: Vec<String>) -> Option<&'static str> {
+        let to_add = Rc::clone(&self.nodes[&node]);
+        for node_output in node_outputs {
+            if !self.outputs.contains(&node_output) {
+                self.outputs.push(node_output.clone());
+            }
+
+            if !self.inputs.contains(&node) {
+                self.inputs.push(node.clone());
+            }
+
+            match self.nodes.get(&node_output.clone()) {
+                Some(mut_node) => {
+                        self.link_counter += 1;
+                        mut_node.borrow_mut().add_input(Rc::clone(&to_add));
+                },
                 None => ()
             }
-            self.nodes.insert(node_link.clone(), to_add);
+            println!("{:?} links were created", self.link_counter);
+            // self.nodes.insert(node_link.clone(), to_add);
             //mut_node.add_input(new_node);
             //*self.nodes.entry(&node_name.clone()).or_insert(42).add_input(&new_node);
             //self.nodes[&node_name.clone()].add_input(&new_node);
@@ -53,18 +60,26 @@ impl CircuitBuilderTrait for CircuitBuilder {
         return None;
     }
     fn get_circuit(&mut self) -> Circuit {
-        let output_nodes: RefCell<Vec<Rc<Node>>> = RefCell::new(Vec::new());
-        for (node_name, is_no_output) in self.nodes_is_no_ouput.iter() {
-            if !*is_no_output {
-                // Extra dereferencing and referencing for increased performance.
-                let new_f = self.nodes.remove(node_name);
-                match new_f {
-                    Some(node) => output_nodes.borrow_mut().push(node),
-                    None => println!("not found")
-                };
+        let output_nodes: RefCell<Vec<Rc<RefCell<Node>>>> = RefCell::new(Vec::new());
+        for output in self.outputs.iter() {
+            if !self.inputs.contains(&output) {
+                output_nodes.borrow_mut().push(self.nodes[output].clone());
             }
         };
-        let nodes: RefCell<Vec<Rc<Node>>> = RefCell::new(self.nodes.iter().map(|(_, node)| node.clone()).collect());
+        // for (node_name, is_no_output) in self.nodes_is_no_ouput.iter() {
+        //     if !*is_no_output {
+        //         // Extra dereferencing and referencing for increased performance.
+        //         let new_f = self.nodes.remove(node_name);
+        //         match new_f {
+        //             Some(node) => output_nodes.borrow_mut().push(node),
+        //             None => println!("not found")
+        //         };
+        //     }
+        // };
+        let mut nodes: RefCell<Vec<Rc<RefCell<Node>>>> = RefCell::new(vec![]);
+        for (_, node) in self.nodes.iter() {
+            nodes.borrow_mut().push(Rc::clone(node));
+        }
         let c = Circuit::new(nodes, output_nodes);
         self.check_strategy.check(&c);
         //check strategy
@@ -77,8 +92,10 @@ impl CircuitBuilder  {
         let cb: Box<dyn CircuitBuilderTrait> = Box::new(CircuitBuilder {
             factory: factory,
             nodes: HashMap::new(),
-            nodes_is_no_ouput: HashMap::new(),
-            check_strategy: checker_strategy
+            check_strategy: checker_strategy,
+            inputs: Vec::new(),
+            outputs: Vec::new(),
+            link_counter: 0
         });
         return cb;
     }
