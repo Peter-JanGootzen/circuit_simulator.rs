@@ -1,29 +1,31 @@
-use super::node::NodeTrait;
-use super::output::Output;
+use std::cell::RefCell;
+use std::rc::Rc;
+use crate::models::node::Node;
 
 #[derive(Clone)]
 pub struct Circuit {
-    pub nodes: Vec<Box<dyn NodeTrait>>,
-    pub output_nodes: Vec<Box<dyn NodeTrait>>
+    nodes: RefCell<Vec<Rc<Node>>>,
+    output_nodes: RefCell<Vec<Rc<Node>>>
 }
 
-impl NodeTrait for Circuit {
-    fn get_output(&self) -> Output {
-        return self.get_last_node().get_output();
-    }
-    fn get_inputs(&self) -> &Vec<&Box<dyn NodeTrait>> {
-        return self.get_last_node().get_inputs();
-    }
-}
+//impl NodeTrait for Circuit {
+//    fn get_output(&self) -> Output {
+//        return self..get_output();
+//    }
+//}
 
 impl Circuit {
-    pub fn new(nodes: Vec<Box<dyn NodeTrait>>, output_nodes: Vec<Box<dyn NodeTrait>>) -> Circuit {
+    pub fn new(nodes: RefCell<Vec<Rc<Node>>>, output_nodes: RefCell<Vec<Rc<Node>>>) -> Circuit {
         Circuit {
             nodes: nodes,
             output_nodes: output_nodes
         }
     }
-    pub fn get_last_node(&self) -> &Box<dyn NodeTrait> {
-        return &self.nodes[self.nodes.len() - 1];
+    pub fn get_output_nodes(&self) -> Vec<Rc<Node>> {
+        return self.output_nodes.borrow().iter().map(|node| node.clone()).collect();
+    }
+    pub fn get_nodes(&self) -> Vec<Rc<Node>> {
+        return self.nodes.borrow().iter().map(|node| node.clone()).collect();
     }
 }
+

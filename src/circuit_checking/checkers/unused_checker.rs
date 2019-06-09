@@ -1,20 +1,25 @@
 use std::collections::HashMap;
-use crate::models::node::NodeTrait;
+use crate::models::node::Node;
 use crate::circuit_checking::checker::Checker;
 use crate::models::circuit::Circuit;
 use crate::circuit_checking::checker_message::CheckerMessage;
+use std::rc::Rc;
 
-pub struct UnusedChecker<'a> {
-    nodes_found: HashMap<&'a Box<dyn NodeTrait>, bool>
+pub struct UnusedChecker {
+    nodes_found: HashMap<Rc<Node>, bool>
 }
 
-impl<'a> Checker<'a> for UnusedChecker<'a> {
-    fn check(&mut self, circuit: &'a Circuit) -> Option<CheckerMessage> {
-        for node in circuit.nodes.iter() {
-            self.nodes_found.insert(&node, false);
+impl Checker for UnusedChecker {
+    fn check(&mut self, circuit: &Circuit) -> Option<CheckerMessage> {
+        for node in circuit.get_nodes().iter() {
+            self.nodes_found.insert(node.clone(), false);
         }
 
-        self.rec(circuit.get_last_node());
+
+        let circuit_output_nodes = circuit.get_output_nodes();
+        for node in circuit_output_nodes.iter() {
+            self.rec(node.clone());
+        }
 
         for (_, found) in self.nodes_found.iter() {
             if !found {
@@ -27,15 +32,20 @@ impl<'a> Checker<'a> for UnusedChecker<'a> {
 
 }
 
-impl<'a> UnusedChecker<'a> {
-    fn rec(&mut self, current_node: &'a Box<dyn NodeTrait>) {
-        self.nodes_found.insert(current_node, true);
-        let input_nodes = current_node.get_inputs();
-        for node in input_nodes.iter() {
-            self.rec(&mut &node);
+impl UnusedChecker {
+    fn rec(&mut self, current_node: Rc<Node>) {
+        self.nodes_found.insert(current_node.clone(), true);
+        let input_nodes = current_node.get_input_nodes();
+        match input_nodes {
+            Some(nodes) => {
+                for node in nodes.iter() {
+                    self.rec(node.clone());
+                }
+            },
+            None => ()
         }
     }
-    pub fn new() -> UnusedChecker<'a> {
+    pub fn new() -> UnusedChecker {
         return UnusedChecker {
             nodes_found: HashMap::new()
         }

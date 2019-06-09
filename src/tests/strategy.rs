@@ -1,79 +1,28 @@
 use crate::circuit_checking::checkers::infinite_loop_checker::InfiniteLoopChecker;
 use crate::circuit_checking::checker::Checker;
-use crate::models::node::NodeStruct;
-use crate::models::node::NodeTrait;
-use crate::models::gates::SignalGate;
-use crate::models::gates::NotGate;
-use crate::models::gates::AndGate;
-use crate::models::gates::OrGate;
-use crate::models::output::Output;
 use crate::models::circuit::Circuit;
-
-//#[test]
-//fn infiniteloopchecker_test() {
-//    let nodes: Vec<Box<dyn NodeTrait>> = Vec::new();
-//
-//    let signal_false_node = NodeStruct {
-//        inputs: Vec::new(),
-//        gate: SignalGate { signal: Output::False }
-//    };
-//
-//    let mut not_node = NodeStruct {
-//        inputs: Vec::new(),
-//        gate: NotGate
-//    };
-//
-//    let signal_true_node = NodeStruct {
-//        inputs: Vec::new(),
-//        gate: SignalGate { signal: Output::True }
-//    };
-//
-//    let mut and_node = NodeStruct {
-//        inputs: Vec::new(),
-//        gate: AndGate
-//    };
-//    let and_node_box: Box<dyn NodeTrait> = Box::new(and_node);
-//    let mut circuit = Circuit {
-//        nodes: nodes,
-//        last_node: &and_node_box
-//    };
-//    circuit.nodes.push(and_node_box);
-//    circuit.nodes.push(Box::new(signal_false_node));
-//    circuit.nodes.push(Box::new(signal_true_node));
-//    circuit.nodes.push(Box::new(not_node));
-//
-//    not_node.inputs.push(&circuit.nodes[1]);
-//    and_node.inputs.push(&circuit.nodes[2]);
-//    and_node.inputs.push(&circuit.nodes[3]);
-//    let mut checker = InfiniteLoopChecker::new();
-//    assert!(checker.check(&circuit).is_none());
-//}
+use crate::models::node::Node;
+use crate::models::output::Output;
+use std::rc::Rc;
+use crate::models::gates::NotGate;
+use crate::models::gates::SignalGate;
+use std::cell::RefCell;
 
 #[test]
-fn infiniteloopchecker_testv2() {
-    let signal_false_node: Box<dyn NodeTrait> = Box::new(NodeStruct {
-        inputs: Vec::new(),
-        gate: SignalGate { signal: Output::False }
-    });
+pub fn infiniteloopchecker_test() {
+    let false_signal_node = Rc::new(Node::Signal(SignalGate {
+        signal: Output::False
+    }));
 
-    let not_node: Box<dyn NodeTrait> = Box::new(NodeStruct {
-        inputs: Vec::new(),
-        gate: NotGate
-    });
+    let not_node = Rc::new(Node::Not(NotGate {
+        inputs: RefCell::new(vec![false_signal_node.clone()])
+    }));
+    let all_nodes: Vec<Rc<Node>> = vec![
+        false_signal_node.clone(),
+        not_node.clone()
+    ];
+    let circuit = Circuit::new(RefCell::new(all_nodes), RefCell::new(vec![not_node.clone()]));
 
-    let signal_true_node: Box<dyn NodeTrait> = Box::new(NodeStruct {
-        inputs: Vec::new(),
-        gate: SignalGate { signal: Output::True }
-    });
-
-    let and_node: Box<dyn NodeTrait> = Box::new(NodeStruct {
-        inputs: Vec::new(),
-        gate: AndGate
-    });
-    let circuit = Circuit {
-        nodes: vec![signal_false_node, not_node, signal_true_node, and_node],
-        output_nodes: vec![]
-    };
     let mut checker = InfiniteLoopChecker::new();
     assert!(checker.check(&circuit).is_none());
 }

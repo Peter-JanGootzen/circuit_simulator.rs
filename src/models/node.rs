@@ -1,12 +1,16 @@
 extern crate objekt_clonable;
 extern crate mopa;
-use objekt_clonable::*;
-use mopa::*;
 use super::output::Output;
 use std::hash::Hash;
 use std::hash::Hasher;
 //use std::collections::hash_map::DefaultHasher;
 use std::mem::transmute;
+use std::rc::Rc;
+use crate::models::gates::NotGate;
+use crate::models::gates::SignalGate;
+use crate::models::gates::OrGate;
+use crate::models::gates::AndGate;
+use crate::models::gates::ProbeGate;
 
 //fn create_key(t: &dyn NodeTrait) -> [usize; 2] {
 //    unsafe {
@@ -14,46 +18,68 @@ use std::mem::transmute;
 //    }
 //}
 
-#[clonable]
-pub trait NodeTrait: Clone {
-    fn get_output(&self) -> Output;
-    fn get_inputs(&self) -> &Vec<&Box<dyn NodeTrait>>;
-}
-
 #[derive(Clone)]
-pub struct NodeStruct<'a, Gate> {
-    pub inputs: Vec<&'a Box<dyn NodeTrait>>,
-    pub gate: Gate,
+pub enum Node {
+    Not(NotGate),
+    Signal(SignalGate),
+    Or(OrGate),
+    And(AndGate),
+    Probe(ProbeGate)
 }
-impl<'a, Gate> NodeStruct<'a, Gate> {
-    pub fn new(gate: Gate) -> NodeStruct<'a, Gate> {
-        NodeStruct {
-            inputs: Vec::new(),
-            gate: gate
+impl NodeTrait for Node {
+    fn get_output(&self) -> Output {
+        match self {
+            Node::Not(gate) => gate.get_output(),
+            Node::Signal(gate) => gate.get_output(),
+            Node::Or(gate) => gate.get_output(),
+            Node::And(gate) => gate.get_output(),
+            Node::Probe(gate) => gate.get_output()
         }
     }
-    pub fn add_input(&mut self, node: &'a Box<dyn NodeTrait>) {
-        self.inputs.push(node);
+}
+
+impl Node {
+    pub fn add_input(&mut self, node: Rc<Node>) {
+        match self {
+            Node::Not(gate) => gate.inputs.borrow_mut().push(node),
+            Node::And(gate) => gate.inputs.borrow_mut().push(node),
+            Node::Or(gate) => gate.inputs.borrow_mut().push(node),
+            Node::Probe(gate) => gate.inputs.borrow_mut().push(node),
+            _ => ()
+        }
     }
+    pub fn get_input_nodes(&self) -> Option<Vec<Rc<Node>>> {
+        match self {
+            Node::Not(gate) => {
+                let inputs: Vec<Rc<Node>> = gate.inputs.borrow().iter().map(|node| node.clone()).collect();
+                Some(inputs.iter().map(|node| node.clone()).collect())
+            }
+            Node::Signal(_) => None,
+            _ => None
+        }
+    }
+}
+
+pub trait NodeTrait {
+    fn get_output(&self) -> Output;
 }
 
 pub struct CompositeNodeStruct {
-    pub child_node: Box<dyn NodeTrait>
+    pub child_node: Rc<Node>
 }
-
 
 trait DataPointer<T: ?Sized> {
-    fn get_memory_key(&self) -> usize;
+    fn get_memory_key(&self) -> i32;
 }
-impl<'a> DataPointer<dyn NodeTrait> for Box<dyn NodeTrait> {
-    fn get_memory_key(&self) -> usize {
+impl<'a> DataPointer<Node> for Node {
+    fn get_memory_key(&self) -> i32 {
         unsafe {
-            transmute::<&dyn NodeTrait, [usize; 2]>(&**self)[0]
+            transmute::<&Node, [i32; 2]>(&*self)[0]
         }
     }
 }
 
-impl<'a> PartialEq for Box<dyn NodeTrait> {
+impl<'a> PartialEq for Node {
     fn eq(&self, other: &Self) -> bool {
         //return create_key(&**self)[0] == create_key(&**other)[0];
         return self.get_memory_key() == other.get_memory_key();
@@ -62,8 +88,8 @@ impl<'a> PartialEq for Box<dyn NodeTrait> {
         //return self.as_ref() == other.as_ref();
     }
 }
-impl<'a> Eq for Box<dyn NodeTrait> {}
-impl<'a> Hash for Box<dyn NodeTrait> {
+impl<'a> Eq for Node {}
+impl<'a> Hash for Node {
     fn hash<H: Hasher>(&self, state: &mut H) {
         return std::ptr::hash(self, state);
     }

@@ -70,6 +70,7 @@ pub trait CircuitReaderTrait {
         let node_name = node_strings[0].to_string();
         let mut node_type = node_strings[1].to_string();
         node_type.remove(node_type.len() - 1);
+        println!("{:?}", node_type);
         return (node_name, node_type)
     }
 
@@ -87,9 +88,11 @@ pub trait CircuitReaderTrait {
     fn parse_input_details(&self, line: String) -> (String, Vec<String>) {
         let input_strings: Vec<&str> = line.split(":").collect();
         let node_name = input_strings[0].to_string();
-        let inputs: Vec<String> = input_strings[1].split(",").into_iter().map(|s| s.to_string()).collect();
+        let mut inputs: Vec<String> = input_strings[1].split(",").into_iter().map(|s| s.to_string()).collect();
         //Removes the last character from the last input string.
-        inputs[inputs.len() - 1].remove(inputs[inputs.len() - 1].len() -1);
+        let inputs_len = inputs.len();
+        let idx = inputs[inputs_len - 1].len() -1;
+        inputs[inputs_len - 1].remove(idx);
         return (node_name, inputs);
     }
 }
