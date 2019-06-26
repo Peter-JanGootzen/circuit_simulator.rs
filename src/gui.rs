@@ -56,7 +56,7 @@ pub fn simulate(circuit_option: &Option<Circuit>) -> String {
             let mut visitor = ConcreteVisitor::new();
             let mut output = String::new();
             for node in circuit.get_nodes().iter() {
-                node.accept_visitor(&mut visitor);
+                node.borrow().accept_visitor(&mut visitor);
                 output += &visitor.get_output();
             }
             return output;

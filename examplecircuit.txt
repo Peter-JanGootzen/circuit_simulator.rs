@@ -6,8 +6,8 @@
 #
 # Description of all the nodes
 #
-A:INPUT_HIGH;
-B:INPUT_HIGH;
+A:INPUT_LOW;
+B:INPUT_LOW;
 Cin:INPUT_HIGH;
 Cout:PROBE;
 S:PROBE;
